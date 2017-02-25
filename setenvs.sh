@@ -1,0 +1,6 @@
+export MYWIKI_PORT=8080
+echo $MYWIKI_PORT
+export MYWIKI_ENVIRONMENT=dev
+echo $MYWIKI_ENVIRONMENT
+export MYWIKI_MONGO_URL=mongodb://localhost
+echo $MYWIKI_MONGO_URL
