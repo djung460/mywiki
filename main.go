@@ -35,7 +35,7 @@ func main() {
 
 	var db models.DB
 	if dev {
-		d, err := models.NewMongoDB(config.MongoURL)
+		d, err := models.Init()
 		if err != nil {
 			log.Fatalf("error connecting to mongo [%s]", err)
 			os.Exit(1)
@@ -50,7 +50,7 @@ func main() {
 
 	// APIs
 	r.Handle("/api/articles", api.Articles(db)).Methods("GET")
-	r.Handle("/api/article", api.CreateArticle(db)).Methods("PUT")
+	//r.Handle("/api/article", api.CreateArticle(db)).Methods("PUT")
 
 	r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		renderer.Render(w, http.StatusNotFound, "not_found", map[string]string{
