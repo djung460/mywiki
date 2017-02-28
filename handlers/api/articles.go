@@ -16,8 +16,7 @@ func Articles(db models.DB) http.Handler {
 	)
 
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		username := r.URL.Path[len("/"):]
-		articles, err := db.GetAllArticlesByUser(username)
+		articles, err := db.GetAllArticlesByUser("test")
 		log.Print(articles)
 		if err != nil {
 			log.Print("ERROR PANIC")

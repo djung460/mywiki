@@ -2,38 +2,57 @@ var Root = React.createClass({
   getInitialState: function() {
     return {
       articleTitles: [],
-      formArticleTitle: ""
     };
   },
   componentDidMount: function() {
     $.getJSON("/api/articles", function(data) {
-      this.setState({articleTitles: data["articles"]});
+      var articles = data["articles"];
+      var titles = [];
+      for(var i = 0; i < articles.length; i++) {
+        var article = JSON.parse(articles[i]);
+        titles.push(article["title"]);
+      }
+      this.setState({articleTitles: titles});
+      console.dir(data["articles"]);
     }.bind(this));
   },
   handleChange: function(evt) {
     evt.preventDefault();
-    this.setState({formArticleTitle: evt.target.value});
+
+    const target = evt.target
+    const val = target.value
+    const name = target.name
+
+    // For handling multiple inputs
+    this.setState({
+      [name]: val
+    });
   },
   handleSubmit: function(e) {
     e.preventDefault();
     $.ajax({
       url: "/api/article",
-      data: JSON.stringify({"title": this.state.formArticleTitle}),
-      method: "PUT",
+      data: JSON.stringify({"title":this.state.formArticleTitle, "content": this.state.formArticleContent}),
+      method:'PUT',
+      type:'POST',
       success: function() {
         var newTitles = this.state.articleTitles;
         newTitles.push(this.state.formArticleTitle);
         this.setState({
           formArticleTitle: "",
-          articleTitles: newTitles
+          formArticleContent: "",
+          articleTitles: newTitles,
         });
-      }.bind(this)
+      }.bind(this),
+      error: function(err){
+          alert('Error adding article');
+      }
     });
   },
   render: function() {
     var listElts = [];
     for(var i = 0; i < this.state.articleTitles.length; i++) {
-      var name = this.state.articleTitles[i];
+      var title = this.state.articleTitles[i];
       listElts.push(<li key={title} className="list-group-item">{title}</li>);
     }
     return (
@@ -48,7 +67,25 @@ var Root = React.createClass({
           <form onSubmit={this.handleSubmit}>
             <div className="form-group">
               <label for="articleTitle">Article Title</label>
-              <input type="text" className="form-control" value={this.state.formArticleTitle} id="articleTitle" placeholder="Article Title" onChange={this.handleChange}/>
+              <input
+                name="formArticleTitle"
+                type="text"
+                className="form-control"
+                value={this.state.formArticleTitle}
+                id="articleTitle"
+                placeholder="Title"
+                onChange={this.handleChange}/>
+            </div>
+            <div className="form-group">
+              <label for="articleTitle">Article Content</label>
+              <input
+                name="formArticleContent"
+                type="text"
+                className="form-control"
+                value={this.state.formArticleContent}
+                id="articleContent"
+                placeholder="Content"
+                onChange={this.handleChange}/>
             </div>
             <button className="btn btn-default">Create</button>
           </form>

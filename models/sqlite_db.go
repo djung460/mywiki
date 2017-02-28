@@ -122,9 +122,11 @@ func (m SqlDb) GetAllArticlesByCategory(category string) ([]Article, error) {
 }
 
 func (m SqlDb) UpsertArticle(article Article) (bool, error) {
-	query := "INSERT OR REPLACE INTO Article(username, title, content, created_date, last_modified_at, cat_name) values (?,?,?,?,?)"
+	query := "INSERT OR REPLACE INTO Article(username, title, content, created_date, last_modified_at, cat_name) values (?,?,?,?,?,?)"
 	stmt, err := m.db.Prepare(query)
 	if err != nil {
+		log.Println("STATEMENT ERROR")
+		log.Print(err)
 		return false, err
 	}
 	res, err := stmt.Exec(
@@ -137,7 +139,9 @@ func (m SqlDb) UpsertArticle(article Article) (bool, error) {
 	)
 	_ = res
 	if err != nil {
+		log.Println("EXEC ERROR")
+		log.Print(err)
 		return false, err
 	}
-	return true, err
+	return true, nil
 }
