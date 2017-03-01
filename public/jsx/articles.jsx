@@ -5,7 +5,8 @@ var Root = React.createClass({
     };
   },
   componentDidMount: function() {
-    $.getJSON("/api/articles", function(data) {
+    var username = window.location.pathname
+    $.getJSON("/api" + username, function(data) {
       var articles = data["articles"];
       var titles = [];
       for(var i = 0; i < articles.length; i++) {

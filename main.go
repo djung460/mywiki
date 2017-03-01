@@ -13,6 +13,7 @@ import (
 	"github.com/djung460/mywiki/util"
 	"github.com/gorilla/mux"
 	"github.com/kelseyhightower/envconfig"
+	"gopkg.in/authboss.v1"
 )
 
 func main() {
@@ -43,13 +44,28 @@ func main() {
 		db = d
 	}
 
+	// Authentication TODO: move to global variable
+	ab := authboss.New()
+	ab.MountPath = "/authboss"
+	ab.LogWriter = os.Stdout
+
+	if err := ab.Init(); err != nil {
+		log.Fatal(err)
+	}
+
 	// Gorilla mux
 	r := mux.NewRouter()
+
+	// Views
 	r.Handle("/", handlers.Index(renderer)).Methods("GET")
-	r.Handle("/articles", handlers.Articles(renderer)).Methods("GET")
+	r.Handle("/{username}", handlers.Articles(renderer)).Methods("GET")
+	//r.Handle("/articles", handlers.Articles(renderer)).Methods("GET")
+
+	// Authentication
+	r.Handle("/authboss", handlers.HandleAuthboss(ab)).Methods("GET")
 
 	// APIs
-	r.Handle("/api/articles", api.Articles(db)).Methods("GET")
+	r.Handle("/api/{username}", api.Articles(db)).Methods("GET")
 	r.Handle("/api/article", api.CreateArticle(db)).Methods("PUT")
 
 	r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
