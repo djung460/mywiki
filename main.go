@@ -66,7 +66,7 @@ func main() {
 
 	// APIs
 	r.Handle("/api/{username}", api.Articles(db)).Methods("GET")
-	r.Handle("/api/article", api.CreateArticle(db)).Methods("PUT")
+	r.Handle("/api/{username}/article", api.CreateArticle(db)).Methods("PUT")
 
 	r.NotFoundHandler = http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		renderer.Render(w, http.StatusNotFound, "not_found", map[string]string{

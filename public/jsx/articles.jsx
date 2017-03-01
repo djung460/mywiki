@@ -31,8 +31,9 @@ var Root = React.createClass({
   },
   handleSubmit: function(e) {
     e.preventDefault();
+    var username = window.location.pathname
     $.ajax({
-      url: "/api/article",
+      url: "/api" + username + "/article",
       data: JSON.stringify({"title":this.state.formArticleTitle, "content": this.state.formArticleContent}),
       method:'PUT',
       type:'POST',
